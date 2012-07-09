@@ -202,6 +202,33 @@ EXPORT_SYMBOL_GPL(cpuidle_resume_and_unlock);
 
 /* Currently used in suspend/resume path to suspend cpuidle */
 void cpuidle_pause(void)
+<<<<<<< HEAD
+=======
+{
+	mutex_lock(&cpuidle_lock);
+	cpuidle_uninstall_idle_handler();
+	mutex_unlock(&cpuidle_lock);
+}
+
+/* Currently used in suspend/resume path to resume cpuidle */
+void cpuidle_resume(void)
+{
+	mutex_lock(&cpuidle_lock);
+	cpuidle_install_idle_handler();
+	mutex_unlock(&cpuidle_lock);
+}
+
+/**
+ * cpuidle_wrap_enter - performs timekeeping and irqen around enter function
+ * @dev: pointer to a valid cpuidle_device object
+ * @drv: pointer to a valid cpuidle_driver object
+ * @index: index of the target cpuidle state.
+ */
+int cpuidle_wrap_enter(struct cpuidle_device *dev,
+				struct cpuidle_driver *drv, int index,
+				int (*enter)(struct cpuidle_device *dev,
+					struct cpuidle_driver *drv, int index))
+>>>>>>> d9db071... PM / cpuidle: System resume hang fix with cpuidle
 {
 	mutex_lock(&cpuidle_lock);
 	cpuidle_uninstall_idle_handler();
