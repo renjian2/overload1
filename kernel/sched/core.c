@@ -8257,7 +8257,10 @@ migration_call(struct notifier_block *nfb, unsigned long action, void *hcpu)
 		break;
 
 	case CPU_DEAD:
+<<<<<<< HEAD
 		clear_hmp_request(cpu);
+=======
+>>>>>>> 13ba92c... sched: Fix load avg vs cpu-hotplug
 		calc_load_migrate(rq);
 		break;
 #endif
