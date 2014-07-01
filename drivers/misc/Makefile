@@ -70,5 +70,9 @@ obj-y				+= qcom/
 obj-$(CONFIG_USB_EXT_TYPE_C_PERICOM)	+= type-c-pericom.o
 obj-$(CONFIG_USB_EXT_TYPE_C_TI)		+= type-c-ti.o
 obj-$(CONFIG_UID_CPUTIME) 	+= uid_cputime.o
+<<<<<<< HEAD
 obj-$(CONFIG_USB_TYPE_C_LEECO)		+= type-c-leeco/
 obj-$(CONFIG_GET_HARDWARE_INFO)		+= hardware_info.o
+=======
+obj-y				+= sound_control.o
+>>>>>>> b1f36d7... sound: add sound control to increase headphones, speaker and mic gain.
