@@ -68,3 +68,10 @@ config FB_MSM_MDSS_BACKLIGHT_LEECO
 	bool "Enable LeEco backlight hacks"
 	---help---
 	Enables LeEco specific backlight hacks
+
+config FB_MSM_MDSS_KCAL_CTRL
+	depends on FB_MSM_MDSS
+	bool "MDSS color control"
+	---help---
+	  Enable sysfs for rgb/lut control for mdss-mdp display controllers
+	  in the MDSS sub-system.
