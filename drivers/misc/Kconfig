@@ -585,6 +585,15 @@ config QFP_FUSE
 config QPNP_MISC
 	tristate "QPNP Misc Peripheral"
 	depends on SPMI
+config UID_CPUTIME
+	tristate "Per-UID cpu time statistics"
+	depends on PROFILING
+	help
+	  Per UID based cpu time statistics exported to /proc/uid_cputime
+
+config UID_SYS_STATS
+	bool "Per-UID statistics"
+	depends on PROFILING
 	help
 	  Say 'y' here to include support for the Qualcomm QPNP MISC
 	  peripheral. The MISC peripheral holds the USB ID interrupt
