@@ -138,6 +138,9 @@ source "drivers/staging/dwc2/Kconfig"
 
 source "drivers/staging/prima/Kconfig"
 
+
 source "drivers/staging/product_config/Kconfig"
+=======
+source "drivers/staging/frandom/Kconfig"
 
 endif # STAGING
