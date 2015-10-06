@@ -2477,6 +2477,11 @@ CONFIG_VGA_ARB_MAX_GPUS=16
 CONFIG_MSM_KGSL=y
 # CONFIG_MSM_KGSL_CFF_DUMP is not set
 CONFIG_MSM_ADRENO_DEFAULT_GOVERNOR="msm-adreno-tz"
+<<<<<<< HEAD:arch/arm64/configs/lineage_s2_defconfig
+=======
+CONFIG_KGSL_PER_PROCESS_PAGE_TABLE=y
+CONFIG_ADRENO_IDLER=y
+>>>>>>> 0bf1be5... dominator: Enable ADRENO IDLER:arch/arm64/configs/cyanogenmod_tomato-64_defconfig
 # CONFIG_VGASTATE is not set
 # CONFIG_VIDEO_OUTPUT_CONTROL is not set
 CONFIG_FB=y
