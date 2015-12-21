@@ -125,7 +125,11 @@ void migrate_irqs(void)
 
 /*
 		if (affinity_broken)
+<<<<<<< HEAD
 			pr_warn_ratelimited("IRQ%u no longer affine to CPU%u\n",
+=======
+			pr_debug("IRQ%u no longer affine to CPU%u\n",
+>>>>>>> 15a3682... arm64: irq: remove affinity logging. Makes it hard to use dmesg with this spam
 					    i, smp_processor_id());
 */
 	}
