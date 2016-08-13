@@ -596,3 +596,6 @@ config SND_SOC_SMART_PA_TFA9890
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called  TFA9890 Smart pa
+
+config SOUND_CONTROL
+	bool "Sound control for wcd9335"
