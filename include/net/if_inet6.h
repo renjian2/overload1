@@ -198,8 +198,12 @@ struct inet6_dev {
 	struct ipv6_devconf	cnf;
 	struct ipv6_devstat	stats;
 
+<<<<<<< HEAD
 	struct timer_list	rs_timer;
 	__u8			rs_probes;
+=======
+	__s32			rs_interval;	/* in jiffies */
+>>>>>>> cfba36f... BACKPORT: ipv6 addrconf: implement RFC7559 router solicitation backoff
 
 	unsigned long		tstamp; /* ipv6InterfaceTable update timestamp */
 	struct rcu_head		rcu;
