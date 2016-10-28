@@ -113,8 +113,6 @@ choice
 	config DEFAULT_CFQ
 		bool "CFQ" if IOSCHED_CFQ=y
 
-<<<<<<< HEAD
-=======
 	config DEFAULT_BFQ
 		bool "BFQ" if IOSCHED_BFQ=y
 		help
@@ -128,7 +126,7 @@ choice
 	config DEFAULT_MAPLE
 		bool "Maple" if IOSCHED_MAPLE=y
 
->>>>>>> 1f9a32b... block: Add Maple I/O Scheduler
+
 	config DEFAULT_NOOP
 		bool "No-op"
 
