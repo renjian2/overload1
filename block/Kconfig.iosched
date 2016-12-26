@@ -50,6 +50,10 @@ config IOSCHED_ZEN
 	FCFS, dispatches are back-inserted, deadlines ensure fairness.
         Should work best with devices where there is no travel delay.
 
+config IOSCHED_MAPLE
+	tristate "Maple I/O scheduler"
+	default y
+
 config IOSCHED_CFQ
 	tristate "CFQ I/O scheduler"
 	default y
@@ -109,6 +113,22 @@ choice
 	config DEFAULT_CFQ
 		bool "CFQ" if IOSCHED_CFQ=y
 
+<<<<<<< HEAD
+=======
+	config DEFAULT_BFQ
+		bool "BFQ" if IOSCHED_BFQ=y
+		help
+		  Selects BFQ as the default I/O scheduler which will be
+		  used by default for all block devices.
+		  The BFQ I/O scheduler aims at distributing the bandwidth
+		  as desired, independently of the disk parameters and with
+		  any workload. It also tries to guarantee low latency to
+		  interactive and soft real-time applications.
+
+	config DEFAULT_MAPLE
+		bool "Maple" if IOSCHED_MAPLE=y
+
+>>>>>>> 1f9a32b... block: Add Maple I/O Scheduler
 	config DEFAULT_NOOP
 		bool "No-op"
 
@@ -132,6 +152,7 @@ config DEFAULT_IOSCHED
 	default "fiops" if DEFAULT_FIOPS
 	default "sio" if DEFAULT_SIO
 	default "zen" if DEFAULT_ZEN
+	default "maple" if DEFAULT_MAPLE
 
 endmenu
 
