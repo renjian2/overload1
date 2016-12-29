@@ -158,6 +158,7 @@ static void __speakup_paste_selection(struct work_struct *work)
 	current->state = TASK_RUNNING;
 
 	tty_ldisc_deref(ld);
+tty_unref:
 	tty_kref_put(tty);
 }
 
