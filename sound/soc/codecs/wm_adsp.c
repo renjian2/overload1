@@ -1286,4 +1286,380 @@ int wm_adsp2_init(struct wm_adsp *adsp, bool dvfs)
 }
 EXPORT_SYMBOL_GPL(wm_adsp2_init);
 
+static int wm_adsp_stream_capture(struct wm_adsp *dsp)
+{
+	int avail = 0;
+	int amount_read;
+	int total_read = 0;
+	int ret = 0;
+
+	dsp->buffer_drain_pending = false;
+
+	do {
+		amount_read = 0;
+		do {
+			ret = wm_adsp_capture_block(dsp, &avail);
+			if (ret < 0)
+				return ret;
+
+			amount_read += ret;
+		} while (ret > 0);
+
+		total_read += amount_read;
+	} while (amount_read > 0 && avail > WM_ADSP_MAX_READ_SIZE);
+
+	if (avail > WM_ADSP_MAX_READ_SIZE)
+		dsp->buffer_drain_pending = true;
+
+	return total_read * WM_ADSP_DATA_WORD_SIZE;
+}
+
+static int wm_adsp_ack_buffer_interrupt(struct wm_adsp *dsp)
+{
+	u32 irq_ack;
+	int ret;
+
+	ret = wm_adsp_host_buffer_read(dsp,
+				       HOST_BUFFER_FIELD(irq_count),
+				       &irq_ack);
+	if (ret < 0)
+		return ret;
+
+	if (!dsp->buffer_drain_pending)
+		irq_ack |= 1;		/* enable further IRQs */
+
+	ret = wm_adsp_host_buffer_write(dsp,
+					HOST_BUFFER_FIELD(irq_ack),
+					irq_ack);
+	return ret;
+}
+
+int wm_adsp_stream_handle_irq(struct wm_adsp *dsp)
+{
+	int ret, bytes_captured;
+
+	ret = wm_adsp_host_buffer_read(dsp,
+				       HOST_BUFFER_FIELD(error),
+				       &dsp->dsp_error);
+	if (ret < 0)
+		return ret;
+	if (dsp->dsp_error != 0) {
+		adsp_err(dsp, "DSP error occurred: %d\n", dsp->dsp_error);
+		return -EIO;
+	}
+
+	bytes_captured = wm_adsp_stream_capture(dsp);
+	if (bytes_captured < 0)
+		return bytes_captured;
+
+	ret = wm_adsp_ack_buffer_interrupt(dsp);
+	if (ret < 0)
+		return ret;
+
+	return bytes_captured;
+}
+EXPORT_SYMBOL_GPL(wm_adsp_stream_handle_irq);
+
+int wm_adsp_stream_read(struct wm_adsp *dsp, char __user *buf, size_t count)
+{
+	int avail, to_end;
+	int ret;
+
+	if (!dsp->running)
+		return -EIO;
+
+	avail = CIRC_CNT(dsp->capt_buf.head,
+			 dsp->capt_buf.tail,
+			 dsp->capt_buf_size);
+	to_end = CIRC_CNT_TO_END(dsp->capt_buf.head,
+				 dsp->capt_buf.tail,
+				 dsp->capt_buf_size);
+
+	if (avail < count)
+		count = avail;
+
+	adsp_dbg(dsp, "%s: avail=%d toend=%d count=%zo\n",
+		 __func__, avail, to_end, count);
+
+	if (count > to_end) {
+		if (copy_to_user(buf,
+				 dsp->capt_buf.buf +
+				 dsp->capt_buf.tail,
+				 to_end))
+			return -EFAULT;
+		if (copy_to_user(buf + to_end, dsp->capt_buf.buf,
+				 count - to_end))
+			return -EFAULT;
+	} else {
+		if (copy_to_user(buf,
+				 dsp->capt_buf.buf +
+				 dsp->capt_buf.tail,
+				 count))
+			return -EFAULT;
+	}
+
+	dsp->capt_buf.tail += count;
+	dsp->capt_buf.tail &= dsp->capt_buf_size - 1;
+
+	if (dsp->buffer_drain_pending) {
+		wm_adsp_stream_capture(dsp);
+
+		ret = wm_adsp_ack_buffer_interrupt(dsp);
+		if (ret < 0)
+			return ret;
+	}
+
+	return count;
+}
+EXPORT_SYMBOL_GPL(wm_adsp_stream_read);
+
+int wm_adsp_stream_avail(const struct wm_adsp *dsp)
+{
+	return CIRC_CNT(dsp->capt_buf.head,
+			dsp->capt_buf.tail,
+			dsp->capt_buf_size);
+}
+EXPORT_SYMBOL_GPL(wm_adsp_stream_avail);
+
+#ifdef CONFIG_DEBUG_FS
+static void wm_adsp_debugfs_save_wmfwname(struct wm_adsp *dsp, const char *s)
+{
+	kfree(dsp->wmfw_file_loaded);
+	/* kstrdup returns NULL if (s == NULL) */
+	dsp->wmfw_file_loaded = kstrdup(s, GFP_KERNEL);
+}
+
+static void wm_adsp_debugfs_save_binname(struct wm_adsp *dsp, const char *s)
+{
+	kfree(dsp->bin_file_loaded);
+	dsp->bin_file_loaded = kstrdup(s, GFP_KERNEL);
+}
+
+static ssize_t wm_adsp_debugfs_string_read(struct wm_adsp *dsp,
+					  char __user *user_buf,
+					  size_t count, loff_t *ppos,
+					  const char *string)
+{
+	char *temp;
+	int len;
+	ssize_t ret;
+
+	if (!string || !dsp->running)
+		return 0;
+
+	temp = kmalloc(PAGE_SIZE, GFP_KERNEL);
+	if (!temp)
+		return -ENOMEM;
+
+	len = snprintf(temp, PAGE_SIZE, "%s\n", string);
+	ret = simple_read_from_buffer(user_buf, count, ppos, temp, len);
+	kfree(temp);
+	return ret;
+}
+
+static ssize_t wm_adsp_debugfs_x32_read(struct wm_adsp *dsp,
+					char __user *user_buf,
+					size_t count, loff_t *ppos,
+					int value)
+{
+	char temp[12];
+	int len;
+
+	if (!dsp->running)
+		return 0;
+
+	len = snprintf(temp, sizeof(temp), "0x%06x\n", value);
+	return simple_read_from_buffer(user_buf, count, ppos, temp, len);
+}
+
+static ssize_t wm_adsp_debugfs_running_read(struct file *file,
+					    char __user *user_buf,
+					    size_t count, loff_t *ppos)
+{
+	struct wm_adsp *dsp = file->private_data;
+	char temp[2];
+
+	temp[0] = dsp->running ? 'Y' : 'N';
+	temp[1] = '\n';
+
+	return simple_read_from_buffer(user_buf, count, ppos, temp, 2);
+}
+
+static ssize_t wm_adsp_debugfs_wmfw_read(struct file *file,
+					 char __user *user_buf,
+					 size_t count, loff_t *ppos)
+{
+	struct wm_adsp *dsp = file->private_data;
+
+	return wm_adsp_debugfs_string_read(dsp, user_buf, count, ppos,
+					   dsp->wmfw_file_loaded);
+}
+
+static ssize_t wm_adsp_debugfs_bin_read(struct file *file,
+					 char __user *user_buf,
+					 size_t count, loff_t *ppos)
+{
+	struct wm_adsp *dsp = file->private_data;
+
+	return wm_adsp_debugfs_string_read(dsp, user_buf, count, ppos,
+					   dsp->bin_file_loaded);
+}
+
+static ssize_t wm_adsp_debugfs_fwid_read(struct file *file,
+					 char __user *user_buf,
+					 size_t count, loff_t *ppos)
+{
+	struct wm_adsp *dsp = file->private_data;
+
+	return wm_adsp_debugfs_x32_read(dsp, user_buf, count, ppos,
+					dsp->fw_id);
+}
+
+static ssize_t wm_adsp_debugfs_fwver_read(struct file *file,
+					 char __user *user_buf,
+					 size_t count, loff_t *ppos)
+{
+	struct wm_adsp *dsp = file->private_data;
+
+	return wm_adsp_debugfs_x32_read(dsp, user_buf, count, ppos,
+					dsp->fw_id_version);
+}
+
+static ssize_t wm_adsp_debugfs_buffererror_read(struct file *file,
+					    char __user *user_buf,
+					    size_t count, loff_t *ppos)
+{
+	struct wm_adsp *dsp = file->private_data;
+	int ret;
+	u32 host_buffer_error;
+
+	if (!dsp->card)
+		return 0;
+
+	mutex_lock(&dsp->card->dapm_mutex);
+
+	if (!dsp->running || !dsp->host_buf_ptr) {
+		mutex_unlock(&dsp->card->dapm_mutex);
+		return 0;
+	}
+
+	ret = wm_adsp_host_buffer_read(dsp,
+				       HOST_BUFFER_FIELD(error),
+				       &host_buffer_error);
+
+	mutex_unlock(&dsp->card->dapm_mutex);
+
+	if (ret < 0) {
+		adsp_err(dsp, "Failed to read host buffer: %d\n", ret);
+		return 0;
+	}
+
+	return wm_adsp_debugfs_x32_read(dsp, user_buf, count, ppos,
+					host_buffer_error);
+}
+
+static const struct {
+	const char *name;
+	const struct file_operations fops;
+} wm_adsp_debugfs_fops[] = {
+	{
+		.name = "running",
+		.fops = {
+			.open = simple_open,
+			.read = wm_adsp_debugfs_running_read,
+		},
+	},
+	{
+		.name = "wmfw_file",
+		.fops = {
+			.open = simple_open,
+			.read = wm_adsp_debugfs_wmfw_read,
+		},
+	},
+	{
+		.name = "bin_file",
+		.fops = {
+			.open = simple_open,
+			.read = wm_adsp_debugfs_bin_read,
+		},
+	},
+	{
+		.name = "fw_id",
+		.fops = {
+			.open = simple_open,
+			.read = wm_adsp_debugfs_fwid_read,
+		},
+	},
+	{
+		.name = "fw_version",
+		.fops = {
+			.open = simple_open,
+			.read = wm_adsp_debugfs_fwver_read,
+		},
+	},
+};
+
+static const struct file_operations wm_adsp_debugfs_buffererror_fops = {
+	.open = simple_open,
+	.read = wm_adsp_debugfs_buffererror_read,
+};
+
+void wm_adsp_init_debugfs(struct wm_adsp *dsp, struct snd_soc_codec *codec)
+{
+	struct dentry *root = NULL;
+	struct dentry *buffer_dentry = NULL;
+	char *root_name;
+	int i;
+
+	if (!codec->debugfs_codec_root) {
+		adsp_err(dsp, "No codec debugfs root\n");
+		goto err;
+	}
+
+	root_name = kmalloc(PAGE_SIZE, GFP_KERNEL);
+	if (!root_name)
+		goto err;
+
+	snprintf(root_name, PAGE_SIZE, "dsp%d", dsp->num);
+	root = debugfs_create_dir(root_name, codec->debugfs_codec_root);
+	kfree(root_name);
+
+	if (!root)
+		goto err;
+
+	for (i = 0; i < ARRAY_SIZE(wm_adsp_debugfs_fops); ++i) {
+		if (!debugfs_create_file(wm_adsp_debugfs_fops[i].name,
+					 S_IRUGO, root, dsp,
+					 &wm_adsp_debugfs_fops[i].fops))
+			goto err;
+	}
+
+	buffer_dentry = debugfs_create_dir("buffer0", root);
+	if (!buffer_dentry)
+		goto err;
+
+	if (!debugfs_create_file("error", S_IRUGO, buffer_dentry, dsp,
+				 &wm_adsp_debugfs_buffererror_fops))
+		goto err;
+
+	dsp->debugfs_root = root;
+	return;
+
+err:
+	debugfs_remove_recursive(root);
+	adsp_err(dsp, "Failed to create debugfs\n");
+}
+
+EXPORT_SYMBOL_GPL(wm_adsp_init_debugfs);
+
+
+void wm_adsp_cleanup_debugfs(struct wm_adsp *dsp)
+{
+	debugfs_remove_recursive(dsp->debugfs_root);
+}
+EXPORT_SYMBOL_GPL(wm_adsp_cleanup_debugfs);
+#endif
+
+EXPORT_SYMBOL_GPL(wm_adsp2_init);
+
 MODULE_LICENSE("GPL v2");
