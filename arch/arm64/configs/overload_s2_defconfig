@@ -3773,6 +3773,7 @@ CONFIG_NLS_ISO8859_1=y
 # Kernel hacking
 #
 <<<<<<< HEAD:arch/arm64/configs/overload_s2_defconfig
+<<<<<<< HEAD:arch/arm64/configs/overload_s2_defconfig
 =======
 CONFIG_NTFS_FS=y
 CONFIG_NTFS_RW=y
@@ -3781,6 +3782,10 @@ CONFIG_EXFAT_DISCARD=y
 CONFIG_EXFAT_DEFAULT_CODEPAGE=437
 CONFIG_EXFAT_DEFAULT_IOCHARSET="utf8"
 >>>>>>> f7802e7... Added exFAT support:arch/arm64/configs/andromodx_defconfig
+=======
+CONFIG_NTFS_FS=y
+CONFIG_NTFS_RW=y
+>>>>>>> 3e7fad0... s2: Add NTFS Support with Read/Write:arch/arm64/configs/andromodx_defconfig
 CONFIG_PRINTK_TIME=y
 CONFIG_DEFAULT_MESSAGE_LOGLEVEL=4
 CONFIG_ENABLE_WARN_DEPRECATED=y
