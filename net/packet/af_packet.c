@@ -3190,6 +3190,7 @@ packet_setsockopt(struct socket *sock, int level, int optname, char __user *optv
 			return -EFAULT;
 		if (val > INT_MAX)
 			return -EINVAL;
+<<<<<<< HEAD
 		lock_sock(sk);
 		if (po->rx_ring.pg_vec || po->tx_ring.pg_vec) {
 			ret = -EBUSY;
@@ -3199,6 +3200,10 @@ packet_setsockopt(struct socket *sock, int level, int optname, char __user *optv
 		}
 		release_sock(sk);
 		return ret;
+=======
+		po->tp_reserve = val;
+		return 0;
+>>>>>>> fc564cf... UPSTREAM: net/packet: fix overflow in check for tp_reserve
 	}
 	case PACKET_LOSS:
 	{
