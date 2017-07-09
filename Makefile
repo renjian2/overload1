@@ -6,6 +6,7 @@ PATCHLEVEL = 10
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 SUBLEVEL = 88
 =======
 SUBLEVEL = 90
@@ -25,6 +26,9 @@ SUBLEVEL = 94
 =======
 SUBLEVEL = 94
 >>>>>>> a7e478b... Merge tag 3.10.94 from https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+=======
+SUBLEVEL = 95
+>>>>>>> 7ee43d4... Merge tag 3.10.95 from https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
 EXTRAVERSION =
 NAME = TOSSUG Baby Fish
 
