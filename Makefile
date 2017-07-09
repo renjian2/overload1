@@ -1,6 +1,10 @@
 VERSION = 3
 PATCHLEVEL = 10
+<<<<<<< HEAD
 SUBLEVEL = 88
+=======
+SUBLEVEL = 90
+>>>>>>> 67877a6... Merge tag 3.10.90 from https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
 EXTRAVERSION =
 NAME = TOSSUG Baby Fish
 
