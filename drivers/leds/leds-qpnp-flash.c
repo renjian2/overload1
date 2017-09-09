@@ -1717,6 +1717,81 @@ error_enable_gpio:
 	return;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MACH_XIAOMI_KENZO
+static void qpnp_flashlight_led_brightness_set(struct led_classdev *led_cdev,
+						enum led_brightness value)
+{
+	struct flash_node_data *flash_node;
+	struct qpnp_flash_led *led;
+	int i ;
+
+	flash_node = container_of(led_cdev, struct flash_node_data, cdev);
+	led = dev_get_drvdata(&flash_node->spmi_dev->dev);
+
+	if (value < LED_OFF) {
+		pr_err("Invalid brightness value\n");
+		return;
+	}
+
+	pr_debug("current_ma qpnp_flashlight_led_brightness_set value %d\n", value);
+
+	if (value == 1 || value == 0) {
+		flash_node->cdev.brightness = value;
+		queue_work(led->ordered_workq, &flash_node->work);
+	} else {
+		if (value > flash_node->cdev.max_brightness)
+			value = flash_node->cdev.max_brightness;
+
+		led->flash_node[led->num_leds - 1].cdev.brightness = value;
+		led->flash_node[led->num_leds - 1].type = TORCH;
+		if (100 == value) {
+			led->flash_node[led->num_leds - 1].max_current
+						= 200;
+		} else {
+		led->flash_node[led->num_leds - 1].max_current
+					= flash_node->max_current;
+			}
+
+		for (i = 0 ; i < 2; i++) {
+			if (value < FLASH_LED_MIN_CURRENT_MA && value != 0)
+					value = FLASH_LED_MIN_CURRENT_MA;
+
+			led->flash_node[i + 2].prgm_current = value;
+			led->flash_node[i + 2].flash_on = value ? true : false;
+			if (value)
+				led->flash_node[led->num_leds - 1].trigger |=
+							(0x80 >> led->flash_node[i + 2].id);
+			else
+				led->flash_node[led->num_leds - 1].trigger &=
+							~(0x80 >> led->flash_node[i + 2].id);
+			if (led->flash_node[i + 2].id == FLASH_LED_0) {
+				if (100 == value) {
+					led->flash_node[led->num_leds - 1].
+					prgm_current = 195;
+				} else {
+					led->flash_node[led->num_leds - 1].
+					prgm_current = led->flash_node[i + 2].prgm_current;
+				}
+			} else if (led->flash_node[i + 2].id == FLASH_LED_1) {
+				if (100 == value) {
+					led->flash_node[led->num_leds - 1].
+					prgm_current2 = 78;
+				} else {
+					led->flash_node[led->num_leds - 1].
+					prgm_current2 =
+						led->flash_node[i + 2].prgm_current;
+				}
+			}
+		}
+
+		queue_work(led->ordered_workq, &flash_node->work);
+	}
+}
+#endif
+
+>>>>>>> 4122652... leds: qpnp-flash: Fix switch brightness not stored
 static void qpnp_flash_led_brightness_set(struct led_classdev *led_cdev,
 						enum led_brightness value)
 {
