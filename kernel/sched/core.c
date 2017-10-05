@@ -1505,7 +1505,7 @@ add_new_task_to_grp(struct task_struct *new)
 	raw_spin_unlock(&grp->lock);
 }
 
-<<<<<<< HEAD
+
 
 int sched_set_group_id(struct task_struct *p, unsigned int group_id)
 {
@@ -1606,8 +1606,7 @@ static inline int got_boost_kick(void)
 	return test_bit(BOOST_KICK, &rq->hmp_flags);
 }
 
-=======
->>>>>>> parent of 193bb6a... sched: Trying to reduce power usage
+
 static inline void clear_boost_kick(int cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
