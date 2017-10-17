@@ -1396,12 +1396,10 @@ unsigned int __read_mostly sysctl_sched_spill_nr_run = 10;
  * guide task placement.
  * This sysctl can be set to a default value using boot command line arguments.
  */
-<<<<<<< HEAD
-unsigned int __read_mostly sysctl_sched_enable_power_aware = 0;
-=======
-unsigned int __read_mostly sched_enable_power_aware = 1;
->>>>>>> 36995bf... Tune the Task-Scheduler for Power-Savings
 
+unsigned int __read_mostly sysctl_sched_enable_power_aware = 0;
+
+unsigned int __read_mostly sched_enable_power_aware = 1;
 /*
  * This specifies the maximum percent power difference between 2
  * CPUs for them to be considered identical in terms of their
@@ -3137,11 +3135,10 @@ unsigned int cpu_temp(int cpu)
 
 #else	/* CONFIG_SCHED_HMP */
 
-<<<<<<< HEAD
+
 #define sysctl_sched_enable_power_aware 0
-=======
+
 #define sched_enable_power_aware 1
->>>>>>> 36995bf... Tune the Task-Scheduler for Power-Savings
 
 static inline int task_will_fit(struct task_struct *p, int cpu)
 {
