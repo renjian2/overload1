@@ -118,11 +118,11 @@ config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	  loading your cpufreq low-level hardware driver, using the
 	  'interactive' governor for latency-sensitive workloads.
 
-<<<<<<< HEAD
+
 config CPU_FREQ_DEFAULT_GOV_RELAXED
 	bool "relaxed"
 	select CPU_FREQ_GOV_RELAXED
-=======
+
 config CPU_FREQ_DEFAULT_GOV_DARKNESS
  	bool "darkness"
  	select CPU_FREQ_GOV_DARKNESS
@@ -130,7 +130,7 @@ config CPU_FREQ_DEFAULT_GOV_DARKNESS
 config CPU_FREQ_DEFAULT_GOV_CHILL
 	bool "chill"
 	select CPU_FREQ_GOV_CHILL
->>>>>>> 501cb23... Add Darkness Governor
+
 	select CPU_FREQ_GOV_INTERACTIVE
 	help
 	  Use the CPUFreq governor 'relaxed' as default. This allows

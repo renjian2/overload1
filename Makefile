@@ -1,34 +1,16 @@
 VERSION = 3
 PATCHLEVEL = 10
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 SUBLEVEL = 88
-=======
 SUBLEVEL = 90
->>>>>>> 67877a6... Merge tag 3.10.90 from https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-=======
 SUBLEVEL = 91
->>>>>>> 5d0ff6e... Merge tag 3.10.91 from https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-=======
 SUBLEVEL = 92
->>>>>>> 21404b4... Merge tag 3.10.92 from https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-=======
+
 SUBLEVEL = 93
->>>>>>> 7558cc9... Merge tag 3.10.93 from https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-=======
 SUBLEVEL = 94
->>>>>>> a7e478b... Merge tag 3.10.94 from https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-=======
 SUBLEVEL = 94
->>>>>>> a7e478b... Merge tag 3.10.94 from https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
-=======
+
 SUBLEVEL = 95
->>>>>>> 7ee43d4... Merge tag 3.10.95 from https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+
 EXTRAVERSION =
 NAME = TOSSUG Baby Fish
 

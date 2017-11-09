@@ -1717,8 +1717,6 @@ error_enable_gpio:
 	return;
 }
 
-<<<<<<< HEAD
-=======
 
 #ifdef CONFIG_MACH_XIAOMI_KENZO
 static void qpnp_flashlight_led_brightness_set(struct led_classdev *led_cdev,
@@ -1791,7 +1789,7 @@ static void qpnp_flashlight_led_brightness_set(struct led_classdev *led_cdev,
 }
 #endif
 
->>>>>>> 3eaeb6d... zen-iosched.c added
+
 static void qpnp_flash_led_brightness_set(struct led_classdev *led_cdev,
 						enum led_brightness value)
 {

@@ -585,8 +585,7 @@ static int aw2013_led_probe(struct i2c_client *client,
 
 	mutex_init(&led_array->lock);
 
-<<<<<<< HEAD
-=======
+
 
 	ret = aw2013_power_init(led_array, true);
 	if (ret) {
@@ -600,7 +599,7 @@ static int aw2013_led_probe(struct i2c_client *client,
 	}
 
 
->>>>>>> 7076cf5... version change
+
 	ret = aw_2013_check_chipid(led_array);
 	if (ret) {
 		dev_err(&client->dev, "Check chip id error\n");
@@ -617,17 +616,17 @@ static int aw2013_led_probe(struct i2c_client *client,
 
 	ret = aw2013_power_init(led_array, true);
 	if (ret) {
-<<<<<<< HEAD
+
 		dev_err(&client->dev, "power init failed");
 		goto fail_parsed_node;
-=======
+
 
 		dev_err(&client->dev, "power init failed");
 		goto fail_parsed_node;
 	    return -EINVAL;
 	    printk("tsx_aw2013_power_off_fail\n");
 
->>>>>>> 7076cf5... version change
+
 	}
 
 	return 0;

@@ -138,10 +138,10 @@ source "drivers/staging/dwc2/Kconfig"
 
 source "drivers/staging/prima/Kconfig"
 
-<<<<<<< HEAD
+
 source "drivers/staging/product_config/Kconfig"
-=======
+
 source "drivers/staging/frandom/Kconfig"
->>>>>>> 17690fa... staging: Add frandom RNG driver
+
 
 endif # STAGING
