@@ -1717,12 +1717,7 @@ error_enable_gpio:
 	return;
 }
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> b0a319e... workqueue: make sure delayed work run in local cpu
+
 
 #ifdef CONFIG_MACH_XIAOMI_KENZO
 static void qpnp_flashlight_led_brightness_set(struct led_classdev *led_cdev,
@@ -1795,13 +1790,6 @@ static void qpnp_flashlight_led_brightness_set(struct led_classdev *led_cdev,
 }
 #endif
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 3eaeb6d... zen-iosched.c added
-=======
->>>>>>> 5e91a23... workqueue: make sure delayed work run in local cpu
->>>>>>> b0a319e... workqueue: make sure delayed work run in local cpu
 static void qpnp_flash_led_brightness_set(struct led_classdev *led_cdev,
 						enum led_brightness value)
 {

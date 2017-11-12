@@ -3659,21 +3659,21 @@ static int tapan_write(struct snd_soc_codec *codec, unsigned int reg,
 				reg, ret);
 	}
 
-<<<<<<< HEAD
+
 	if (unlikely(test_bit(BUS_DOWN, &tapan_p->status_mask))) {
 		printk_ratelimited(KERN_ERR "write 0x%02x while offline\n",
 				reg);
 		return -ENODEV;
 	} else
 		return wcd9xxx_reg_write(&wcd9xxx->core_res, reg, value);
-=======
+
 	if (!reg_access(reg))
 		val = wcd9xxx_reg_read(&wcd9xxx->core_res, reg);
 	else
 		val = value;
 
 	return wcd9xxx_reg_write(&wcd9xxx->core_res, reg, val);
->>>>>>> b1f36d7... sound: add sound control to increase headphones, speaker and mic gain.
+
 }
 static unsigned int tapan_read(struct snd_soc_codec *codec,
 				unsigned int reg)

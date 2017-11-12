@@ -855,11 +855,7 @@ bool pm_save_wakeup_count(unsigned int count)
 {
 	unsigned int cnt, inpr;
 	unsigned long flags;
-<<<<<<< HEAD
 	struct wakeup_source *ws;
-=======
->>>>>>> b906962... PM / wakeup: Use irqsave/irqrestore for events_lock
-
 	events_check_enabled = false;
 	spin_lock_irqsave(&events_lock, flags);
 	split_counters(&cnt, &inpr);

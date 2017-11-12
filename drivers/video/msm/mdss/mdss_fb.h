@@ -34,7 +34,7 @@
 #define MSM_FB_ENABLE_DBGFS
 #define WAIT_FENCE_FIRST_TIMEOUT (3 * MSEC_PER_SEC)
 #define WAIT_FENCE_FINAL_TIMEOUT (7 * MSEC_PER_SEC)
-<<<<<<< HEAD
+
 #define WAIT_MAX_FENCE_TIMEOUT (WAIT_FENCE_FIRST_TIMEOUT + \
 					WAIT_FENCE_FINAL_TIMEOUT)
 #define WAIT_MIN_FENCE_TIMEOUT  (1)
@@ -44,15 +44,15 @@
  * activity performed by display thread is waiting for fences. So keeping
  * that as a reference and add additional 20s to sustain system holdups.
  */
-#define WAIT_DISP_OP_TIMEOUT (WAIT_FENCE_FIRST_TIMEOUT + \
+/*#define WAIT_DISP_OP_TIMEOUT (WAIT_FENCE_FIRST_TIMEOUT + \
 		WAIT_FENCE_FINAL_TIMEOUT + (20 * MSEC_PER_SEC))
-=======
+*/
 /* Display op timeout should be greater than the total timeout but not
  * unreasonably large. Set to 1s more than first wait + final wait which
  * are already quite long and proceed without any further waits. */
 #define WAIT_DISP_OP_TIMEOUT (WAIT_FENCE_FIRST_TIMEOUT + \
 		WAIT_FENCE_FINAL_TIMEOUT + 1)
->>>>>>> e9bac98... msm: mdss: Adjust fence timeouts
+
 
 #ifndef MAX
 #define  MAX(x, y) (((x) > (y)) ? (x) : (y))
