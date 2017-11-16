@@ -46,6 +46,7 @@
 #include <linux/notifier.h>
 #include <linux/reboot.h>
 #include <linux/suspend.h>
+#include <linux/panic_reason.h>
 #include <soc/qcom/msm-core.h>
 #include <linux/cpumask.h>
 
@@ -2616,6 +2617,7 @@ static void msm_thermal_bite(int zone_id, long temp)
 	int ret = 0;
 
 	ret = zone_id_to_tsen_id(zone_id, &tsens_id);
+	set_panic_trig_rsn(TRIG_OVER_TEMPERATURE);
 	if (ret < 0) {
 		pr_err("Zone:%d reached temperature:%ld. Err = %d System reset\n",
 			zone_id, temp, ret);
@@ -3713,8 +3715,6 @@ init_freq_thread:
 		pr_err("Failed to create frequency mitigation thread. err:%ld\n",
 				PTR_ERR(freq_mitigation_task));
 		return;
-	} else {
-		complete(&freq_mitigation_complete);
 	}
 }
 

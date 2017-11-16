@@ -24,6 +24,7 @@
 #include <linux/delay.h>
 #include <linux/qpnp/power-on.h>
 #include <linux/of_address.h>
+#include <linux/panic_reason.h>
 
 #include <asm/cacheflush.h>
 #include <asm/system_misc.h>
@@ -63,7 +64,7 @@ static void *emergency_dload_mode_addr;
 static bool scm_dload_supported;
 
 static int dload_set(const char *val, struct kernel_param *kp);
-static int download_mode = 1;
+static int download_mode = 0;
 module_param_call(download_mode, dload_set, param_get_int,
 			&download_mode, 0644);
 static int panic_prep_restart(struct notifier_block *this,
@@ -235,10 +236,7 @@ static void msm_restart_prepare(const char *cmd)
 			((cmd != NULL && cmd[0] != '\0') &&
 			strcmp(cmd, "recovery") &&
 			strcmp(cmd, "bootloader") &&
-			strcmp(cmd, "rtc") &&
-			strcmp(cmd, "dm-verity device corrupted") &&
-			strcmp(cmd, "dm-verity enforcing") &&
-			strcmp(cmd, "keys clear")))
+			strcmp(cmd, "rtc")))
 			need_warm_reset = true;
 	} else {
 		need_warm_reset = (get_dload_mode() ||
@@ -265,12 +263,6 @@ static void msm_restart_prepare(const char *cmd)
 			qpnp_pon_set_restart_reason(
 				PON_RESTART_REASON_RTC);
 			__raw_writel(0x77665503, restart_reason);
-		} else if (!strcmp(cmd, "dm-verity device corrupted")) {
-			__raw_writel(0x77665508, restart_reason);
-		} else if (!strcmp(cmd, "dm-verity enforcing")) {
-			__raw_writel(0x77665509, restart_reason);
-		} else if (!strcmp(cmd, "keys clear")) {
-			__raw_writel(0x7766550a, restart_reason);
 		} else if (!strncmp(cmd, "oem-", 4)) {
 			unsigned long code;
 			int ret;
@@ -283,6 +275,9 @@ static void msm_restart_prepare(const char *cmd)
 		} else {
 			__raw_writel(0x77665501, restart_reason);
 		}
+	}
+	if(in_panic){
+		qpnp_pon_set_restart_reason(PON_RESTART_REASON_PANIC);
 	}
 
 	flush_cache_all();
@@ -328,6 +323,7 @@ static void do_msm_restart(enum reboot_mode reboot_mode, const char *cmd)
 	};
 
 	pr_notice("Going down for restart now\n");
+	set_panic_trig_rsn(KERNEL_ALIVE);
 
 	msm_restart_prepare(cmd);
 
@@ -367,6 +363,7 @@ static void do_msm_poweroff(void)
 	};
 
 	pr_notice("Powering off the SoC\n");
+	set_panic_trig_rsn(KERNEL_ALIVE);
 #ifdef CONFIG_MSM_DLOAD_MODE
 	set_dload_mode(0);
 #endif
