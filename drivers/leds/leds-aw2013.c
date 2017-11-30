@@ -597,11 +597,9 @@ static int aw2013_led_probe(struct i2c_client *client,
 
 	ret = aw2013_power_init(led_array, true);
 	if (ret) {
-<<<<<<< HEAD
+
 		dev_err(&client->dev, "power init failed");
 		goto fail_parsed_node;
-=======
-<<<<<<< HEAD
 
 		dev_err(&client->dev, "power init failed");
 		goto fail_parsed_node;
@@ -613,11 +611,8 @@ static int aw2013_led_probe(struct i2c_client *client,
 	    printk("tsx_aw2013_power_off_fail\n");
 
 
-=======
 	    return -EINVAL;
 	    printk("tsx_aw2013_power_off_fail\n");
->>>>>>> 0304b06... Fix led for miui mm
->>>>>>> f6e86a6... Fix led for miui mm
 	}
 
 	printk("tsx_aw2013_led_probe_ok\n");

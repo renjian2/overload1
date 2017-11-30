@@ -19,7 +19,7 @@
 #include "msm_camera_dt_util.h"
 #include "msm_sensor_module_info.h"
 #ifdef CONFIG_GET_HARDWARE_INFO
-#include <soc/qcom/hardware_info.h>
+#include <asm/hardware_info.h>
 #endif
 
 /* Logging macro */
