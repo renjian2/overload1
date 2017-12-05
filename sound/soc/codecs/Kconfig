@@ -579,7 +579,6 @@ config SND_SOC_MSM_HDMI_CODEC_RX
 	HDMI audio drivers should be built only if the platform
         supports hdmi panel.
 
-<<<<<<< HEAD
 config SND_SOC_LEECO
 	depends on SND_SOC
 	bool "Enable LeEco sound hacks"
@@ -597,7 +596,5 @@ config SND_SOC_SMART_PA_TFA9890
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called  TFA9890 Smart pa
-=======
 config SOUND_CONTROL
 	bool "Sound control for wcd9335"
->>>>>>> 296bcfa... ASoC: wcd9335: Sound control
