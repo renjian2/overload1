@@ -464,9 +464,6 @@ config QPNP_SMBCHARGER
 	  supports USB detection and battery charging up to 3A.
 	  The driver also offers relevant information to userspace via the
 	  power supply framework.
-<<<<<<< HEAD
- 
-=======
 
 config TEMP_CHARGE_DISABLE
 	bool "Enable smb1360 disable charging when temp is too hot or too cold"
@@ -483,7 +480,6 @@ config BOARDTEMP_WORK
 	  placed. If there is not ntc on board,this feature must be close
 	  becase this will cause chaos.
 
->>>>>>> e150d52... Fix boardtemp patch merge
 config QPNP_FG
 	tristate "QPNP fuel gauge driver"
 	depends on SPMI
