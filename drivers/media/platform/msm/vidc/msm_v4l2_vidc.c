@@ -62,14 +62,6 @@ static int msm_v4l2_open(struct file *filp)
 		core->id, vid_dev->type);
 		return -ENOMEM;
 	}
-<<<<<<< HEAD
-=======
-
-	dprintk(VIDC_DBG, "pm_qos_add with latency 1000usec\n");
-	pm_qos_add_request(&msm_v4l2_vidc_pm_qos_request,
-			PM_QOS_CPU_DMA_LATENCY, 1000);
-
->>>>>>> dc354c9... msm: vidc: Check for active handle before updating the QoS request
 	clear_bit(V4L2_FL_USES_V4L2_FH, &vdev->flags);
 	filp->private_data = &(vidc_inst->event_handler);
 	trace_msm_v4l2_vidc_open_end("msm_v4l2_open end");
@@ -96,15 +88,6 @@ static int msm_v4l2_close(struct file *filp)
 			"%s: Failed to free output buffers\n", __func__);
 
 	rc = msm_vidc_close(vidc_inst);
-<<<<<<< HEAD
-=======
-
-	dprintk(VIDC_DBG, "pm_qos_update and remove\n");
-	pm_qos_update_request(&msm_v4l2_vidc_pm_qos_request,
-			PM_QOS_DEFAULT_VALUE);
-	pm_qos_remove_request(&msm_v4l2_vidc_pm_qos_request);
-
->>>>>>> dc354c9... msm: vidc: Check for active handle before updating the QoS request
 	trace_msm_v4l2_vidc_close_end("msm_v4l2_close end");
 	return rc;
 }
