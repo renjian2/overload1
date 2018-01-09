@@ -743,13 +743,11 @@ const char * const vmstat_text[] = {
 	"nr_anon_transparent_hugepages",
 	"nr_free_cma",
 	"nr_swapcache",
-<<<<<<< HEAD
-=======
 
 #ifdef CONFIG_UKSM
 	"nr_uksm_zero_pages",
 #endif
->>>>>>> 6ec50d9... [PATCH] UKSM 0.1.2.3
+
 	"nr_dirty_threshold",
 	"nr_dirty_background_threshold",
 
